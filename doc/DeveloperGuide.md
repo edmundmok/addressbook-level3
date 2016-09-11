@@ -45,8 +45,15 @@ Priority | As a ... | I want to ... | So that I can...
 `* * *` | user | add a new person |
 `* * *` | user | delete a person | remove entries that I no longer need
 `* * *` | user | find a person by name | locate details of persons without having to go through the entire list
+`* * *` | user | edit a person's details | update outdated details of people in my address book without having to delete and add the person
 `* *` | user | hide [private contact details](#private-contact-detail) by default | to minimize chance of someone else seeing them by accident
+`* *` | user | add tags to a person | associate the person with some keywords that describe his relationship with me
+`* *` | user | remove tags | remove tags related to a person
+`* *` | user | edit tags | update tags related to a person
+`* *` | user | search by tags | search for people with similar characteristics, like 'friends' or 'colleagues'
+`* *` | user | search for a person's name without specifying an exact match | look for a contact without having to type a person's full name perfectly
 `*` | user with many persons in the address book | sort persons by name | locate a person easily
+`*` | intensive power user | add custom synonyms for commands | use the program faster and customize command words to suit my preferences
 
 
 ## Appendix B : Use Cases
@@ -73,6 +80,37 @@ Use case ends.
 
 > 3a1. AddressBook shows an error message <br>
   Use case resumes at step 2
+  
+#### Use case: Edit tag
+
+**MSS**
+
+1. User requests to list persons
+2. AddressBook shows a list of persons
+3. User requests to edit tag for a specific person in the list
+4. AddressBook edits the tag and displays the new details of that person <br>
+Use case ends.
+
+**Extensions**
+
+2a. The list is empty
+
+> Use case ends
+
+3a. Insufficient parameters with edit tag command
+
+> 3a1. AddressBook shows an error message and displays example usage of edit command <br>
+  Use case resumes at step 3
+  
+3b. The given index is invalid
+
+> 3b1. AddressBook shows an error message <br>
+  Use case resumes at step 2
+  
+3c. The given tag does not exist
+
+> 3c1. AddressBook shows an error message and displays example usage of edit command <br>
+  Use case resumes at step 3
 
 ## Appendix C : Non Functional Requirements
 
@@ -80,6 +118,10 @@ Use case ends.
 2. Should be able to hold up to 1000 persons.
 3. Should come with automated unit tests and open source code.
 4. Should favor DOS style commands over Unix-style commands.
+5. Should be able to carry out commands fast (at most 3 seconds for a 'normal' computer).
+6. Should have a user guide explaining how to use the program.
+7. Should have a developer guide explaining the rational and priorities of the program.
+8. Should be easy and familiar for users coming from other products to use.
 
 ## Appendix D : Glossary
 
