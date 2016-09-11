@@ -1,10 +1,12 @@
 
 
 .text-field {
-    -fx-font-size: 12pt;
+    -fx-font-size: 18pt;
     -fx-font-family: "Consolas";
     -fx-font-weight: bold;
     -fx-text-fill: yellow;
+    -fx-border-color: yellow;
+    -fx-border-width: 2px;
     -fx-control-inner-background: derive(#1d1d1d,20%);
 }
 
