@@ -15,33 +15,10 @@ import java.nio.file.Paths;
 /**
  * Represents the file used to store address book data.
  */
-public class StorageFile {
+public class StorageFile implements Storage {
 
     /** Default file path used if the user doesn't provide the file name. */
     public static final String DEFAULT_STORAGE_FILEPATH = "addressbook.txt";
-
-    /* Note: Note the use of nested classes below.
-     * More info https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html
-     */
-
-    /**
-     * Signals that the given file path does not fulfill the storage filepath constraints.
-     */
-    public static class InvalidStorageFilePathException extends IllegalValueException {
-        public InvalidStorageFilePathException(String message) {
-            super(message);
-        }
-    }
-
-    /**
-     * Signals that some error has occured while trying to convert and read/write data between the application
-     * and the storage file.
-     */
-    public static class StorageOperationException extends Exception {
-        public StorageOperationException(String message) {
-            super(message);
-        }
-    }
 
     private final JAXBContext jaxbContext;
 
@@ -71,8 +48,8 @@ public class StorageFile {
     }
 
     /**
-     * Returns true if the given path is acceptable as a storage file.
-     * The file path is considered acceptable if it ends with '.txt'
+     * Returns true if the given path is acceptable as a storage file. The file
+     * path is considered acceptable if it ends with '.txt'
      */
     private static boolean isValidPath(Path filePath) {
         return filePath.toString().endsWith(".txt");
@@ -81,15 +58,17 @@ public class StorageFile {
     /**
      * Saves all data to this storage file.
      *
-     * @throws StorageOperationException if there were errors converting and/or storing data to file.
+     * @throws StorageOperationException if there were errors converting and/or
+     *             storing data to file.
      */
     public void save(AddressBook addressBook) throws StorageOperationException {
 
-        /* Note: Note the 'try with resource' statement below.
-         * More info: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+        /*
+         * Note: Note the 'try with resource' statement below. More info:
+         * https://docs.oracle.com/javase/tutorial/essential/exceptions/
+         * tryResourceClose.html
          */
-        try (final Writer fileWriter =
-                     new BufferedWriter(new FileWriter(path.toFile()))) {
+        try (final Writer fileWriter = new BufferedWriter(new FileWriter(path.toFile()))) {
 
             final AdaptedAddressBook toSave = new AdaptedAddressBook(addressBook);
             final Marshaller marshaller = jaxbContext.createMarshaller();
@@ -106,11 +85,11 @@ public class StorageFile {
     /**
      * Loads data from this storage file.
      *
-     * @throws StorageOperationException if there were errors reading and/or converting data from file.
+     * @throws StorageOperationException if there were errors reading and/or
+     *             converting data from file.
      */
     public AddressBook load() throws StorageOperationException {
-        try (final Reader fileReader =
-                     new BufferedReader(new FileReader(path.toFile()))) {
+        try (final Reader fileReader = new BufferedReader(new FileReader(path.toFile()))) {
 
             final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             final AdaptedAddressBook loaded = (AdaptedAddressBook) unmarshaller.unmarshal(fileReader);
@@ -120,18 +99,21 @@ public class StorageFile {
             }
             return loaded.toModelType();
 
-        /* Note: Here, we are using an exception to create the file if it is missing. However, we should minimize
-         * using exceptions to facilitate normal paths of execution. If we consider the missing file as a 'normal'
-         * situation (i.e. not truly exceptional) we should not use an exception to handle it.
-         */
+            /*
+             * Note: Here, we are using an exception to create the file if it is
+             * missing. However, we should minimize using exceptions to
+             * facilitate normal paths of execution. If we consider the missing
+             * file as a 'normal' situation (i.e. not truly exceptional) we
+             * should not use an exception to handle it.
+             */
 
-        // create empty file if not found
+            // create empty file if not found
         } catch (FileNotFoundException fnfe) {
             final AddressBook empty = new AddressBook();
             save(empty);
             return empty;
 
-        // other errors
+            // other errors
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);
         } catch (JAXBException jaxbe) {
@@ -143,6 +125,11 @@ public class StorageFile {
 
     public String getPath() {
         return path.toString();
+    }
+
+    @Override
+    public Storage initialise() throws InvalidStorageFilePathException {
+        return new StorageFile();
     }
 
 }
